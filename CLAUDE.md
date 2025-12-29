@@ -734,3 +734,11 @@ Wait for consent; never auto-create ADRs. Group related decisions (stacks, authe
 
 ## Code Standards
 See `.specify/memory/constitution.md` for code quality, testing, performance, security, and architecture principles.
+
+## Project Documentation
+The `docs/` directory contains comprehensive project documentation:
+- **docs/admin-and-user-flow.md**: Complete user journey maps showing admin and client payment flows with detailed state diagrams
+- **docs/payment-links-plan.md**: System architecture, implementation phases, tech stack justification, and timeline breakdown
+- **docs/stripe-integration-guide.md**: Step-by-step Stripe integration guide including setup, security best practices, and testing
+
+Review these documents before making significant architectural or payment flow changes.
