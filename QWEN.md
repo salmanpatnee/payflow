@@ -742,3 +742,10 @@ The `docs/` directory contains comprehensive project documentation:
 - **docs/stripe-integration-guide.md**: Step-by-step Stripe integration guide including setup, security best practices, and testing
 
 Review these documents before making significant architectural or payment flow changes.
+
+## Active Technologies
+- PHP 8.3, TypeScript 5.3 + Laravel 12, Inertia.js v2, Vue 3, shadcn-vue, Stripe PHP SDK, Tailwind CSS v4 (001-foundation-setup)
+- PostgreSQL database (with potential migration from MySQL if needed) (001-foundation-setup)
+
+## Recent Changes
+- 001-foundation-setup: Added PHP 8.3, TypeScript 5.3 + Laravel 12, Inertia.js v2, Vue 3, shadcn-vue, Stripe PHP SDK, Tailwind CSS v4
