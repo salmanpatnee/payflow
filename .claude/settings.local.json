@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(php.exe --version:*)",
+      "Bash(herd:*)",
+      "Bash(php.exe artisan:*)",
+      "Bash(timeout 2 php.exe artisan boost:mcp:*)"
+    ]
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "laravel-boost"
+  ]
+}
