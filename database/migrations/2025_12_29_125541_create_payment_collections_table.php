@@ -13,14 +13,19 @@ return new class extends Migration
     {
         Schema::create('payment_collections', function (Blueprint $table) {
             $table->id();
-            $table->string('uuid')->unique();
-            $table->string('title');
+            $table->uuid('uuid')->unique();
+            $table->string('name');
             $table->text('description')->nullable();
-            $table->enum('status', ['active', 'completed', 'expired'])->default('active')->index();
+            $table->string('status', 50)->default('active');
             $table->timestamp('expires_at')->nullable();
             $table->foreignId('admin_user_id')->constrained('users')->onDelete('cascade');
             $table->timestamps();
             $table->softDeletes();
+
+            // Indexes
+            $table->index('uuid');
+            $table->index('admin_user_id');
+            $table->index('status');
         });
     }
 

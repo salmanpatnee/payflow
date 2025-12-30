@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Str;
 
 class PaymentCollection extends Model
 {
@@ -15,7 +16,7 @@ class PaymentCollection extends Model
 
     protected $fillable = [
         'uuid',
-        'title',
+        'name',
         'description',
         'status',
         'expires_at',
@@ -27,6 +28,17 @@ class PaymentCollection extends Model
         return [
             'expires_at' => 'datetime',
         ];
+    }
+
+    protected static function boot(): void
+    {
+        parent::boot();
+
+        static::creating(function (self $model) {
+            if (empty($model->uuid)) {
+                $model->uuid = (string) Str::uuid();
+            }
+        });
     }
 
     public function adminUser(): BelongsTo

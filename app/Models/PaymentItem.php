@@ -5,7 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class PaymentItem extends Model
 {
@@ -14,28 +13,25 @@ class PaymentItem extends Model
 
     protected $fillable = [
         'payment_collection_id',
+        'name',
         'description',
-        'amount',
-        'status',
-        'stripe_payment_intent_id',
-        'paid_at',
+        'price',
+        'quantity',
+        'type',
+        'sort_order',
     ];
 
     protected function casts(): array
     {
         return [
-            'amount' => 'decimal:2',
-            'paid_at' => 'datetime',
+            'price' => 'decimal:2',
+            'quantity' => 'integer',
+            'sort_order' => 'integer',
         ];
     }
 
     public function paymentCollection(): BelongsTo
     {
         return $this->belongsTo(PaymentCollection::class);
-    }
-
-    public function paymentTransactions(): HasMany
-    {
-        return $this->hasMany(PaymentTransaction::class);
     }
 }
