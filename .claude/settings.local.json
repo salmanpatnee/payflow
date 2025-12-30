@@ -33,7 +33,10 @@
       "mcp__laravel-boost__tinker",
       "Bash(find:*)",
       "mcp__laravel-boost__browser-logs",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "Bash(php artisan make:migration:*)",
+      "Bash(php artisan migrate:*)",
+      "Bash(php artisan:*)"
     ]
   },
   "enableAllProjectMcpServers": true,

@@ -15,6 +15,7 @@ import {
     TableRow,
 } from '@/components/ui/table';
 import AppLayout from '@/layouts/AppLayout.vue';
+import PaymentLinkGenerator from '@/Components/PaymentLinkGenerator.vue';
 import { type BreadcrumbItem } from '@/types';
 
 interface PaymentItem {
@@ -237,6 +238,9 @@ const calculateItemTotal = (item: PaymentItem) => {
 
                     <!-- Sidebar -->
                     <div class="space-y-6">
+                        <!-- Payment Link Generator -->
+                        <PaymentLinkGenerator :collectionId="collection.id" />
+
                         <!-- Metadata Card -->
                         <Card class="overflow-hidden border-border/50 shadow-sm">
                             <div class="border-b border-border/50 bg-muted/30 px-6 py-4">
