@@ -169,7 +169,7 @@
 ## Operational Readiness
 
 ### Deployment Checklist
-- [ ] Switch to production database (MySQL/PostgreSQL)
+- [ ] Switch to production database (MySQL)
 - [ ] Set production Stripe keys (pk_live_, sk_live_)
 - [ ] Configure email service for receipts
 - [ ] Enable HTTPS (required by Stripe)
