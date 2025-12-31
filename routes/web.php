@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\Payment\PaymentCollectionController;
-use App\Http\Controllers\Payment\PaymentWebhookController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
@@ -51,7 +50,7 @@ Route::prefix('payment')->name('payment.')->middleware(\App\Http\Middleware\Secu
 });
 
 // Stripe webhook endpoint (exclude from CSRF protection in middleware)
-Route::post('/webhooks/stripe', [PaymentWebhookController::class, 'handle'])
+Route::post('/webhooks/stripe', [\App\Http\Controllers\Webhooks\StripeWebhookController::class, 'handle'])
     ->name('webhooks.stripe');
 
 // Admin payment collection routes
