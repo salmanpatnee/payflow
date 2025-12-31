@@ -17,6 +17,7 @@ class PaymentCollection extends Model
     protected $fillable = [
         'uuid',
         'name',
+        'title', // Alias for name
         'description',
         'status',
         'expires_at',
@@ -31,6 +32,18 @@ class PaymentCollection extends Model
             'expires_at' => 'datetime',
             'payment_link_expires_at' => 'datetime',
         ];
+    }
+
+    // Accessor: Allow reading 'title' as alias for 'name'
+    public function getTitleAttribute(): ?string
+    {
+        return $this->attributes['name'] ?? null;
+    }
+
+    // Mutator: Allow setting 'title' which sets 'name'
+    public function setTitleAttribute($value): void
+    {
+        $this->attributes['name'] = $value;
     }
 
     protected static function boot(): void

@@ -19,6 +19,11 @@ class PaymentItem extends Model
         'quantity',
         'type',
         'sort_order',
+        'amount',
+        'currency',
+        'status',
+        'stripe_payment_intent_id',
+        'paid_at',
     ];
 
     protected function casts(): array
@@ -27,7 +32,23 @@ class PaymentItem extends Model
             'price' => 'decimal:2',
             'quantity' => 'integer',
             'sort_order' => 'integer',
+            'amount' => 'decimal:2',
+            'paid_at' => 'datetime',
+            'status' => 'string',
+            'currency' => 'string',
         ];
+    }
+
+    protected static function boot(): void
+    {
+        parent::boot();
+
+        // Automatically set amount from price if not provided
+        static::creating(function ($paymentItem) {
+            if (is_null($paymentItem->amount) && ! is_null($paymentItem->price)) {
+                $paymentItem->amount = $paymentItem->price;
+            }
+        });
     }
 
     public function paymentCollection(): BelongsTo

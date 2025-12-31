@@ -48,6 +48,7 @@ class PaymentLinkController extends Controller
         return Inertia::render('Pay/Item', [
             'collection' => [
                 'id' => $collection->id,
+                'uuid' => $collection->uuid,
                 'name' => $collection->name,
                 'description' => $collection->description,
                 'expires_at' => $collection->payment_link_expires_at,
@@ -55,11 +56,13 @@ class PaymentLinkController extends Controller
             'item' => [
                 'id' => $item->id,
                 'description' => $item->description,
-                'amount' => (float) $item->price * $item->quantity,
-                'status' => 'pending',
+                'amount' => $item->amount ?? ((float) $item->price * $item->quantity),
+                'currency' => $item->currency ?? 'usd',
+                'status' => $item->status ?? 'pending',
                 'due_date' => $collection->due_date,
             ],
             'token' => $token,
+            'stripeKey' => config('stripe.key'),
         ]);
     }
 
@@ -89,8 +92,8 @@ class PaymentLinkController extends Controller
             return [
                 'id' => $item->id,
                 'description' => $item->description,
-                'amount' => (float) $item->price * $item->quantity,
-                'status' => 'pending',
+                'amount' => $item->amount ?? ((float) $item->price * $item->quantity),
+                'status' => $item->status === 'completed' ? 'paid' : $item->status,
                 'due_date' => $collection->due_date,
             ];
         });

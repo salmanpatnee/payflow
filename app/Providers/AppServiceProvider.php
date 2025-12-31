@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use App\Models\PaymentCollection;
+use App\Models\PaymentItem;
+use App\Observers\PaymentItemObserver;
 use App\Policies\PaymentCollectionPolicy;
 use Illuminate\Support\ServiceProvider;
 
@@ -25,6 +27,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        PaymentItem::observe(PaymentItemObserver::class);
     }
 }

@@ -748,6 +748,8 @@ Review these documents before making significant architectural or payment flow c
 - PostgreSQL database (with potential migration from MySQL if needed) (001-foundation-setup)
 - PHP 8.3, TypeScript 5.3, Laravel 12 + Laravel Framework, Inertia.js v2, Vue 3, shadcn-vue, Stripe PHP SDK, Tailwind CSS v4 (001-payment-collections)
 - PostgreSQL database with payment_collections and payment_items tables (001-payment-collections)
+- PHP 8.3, TypeScript 5.3 + Laravel 12, Inertia.js v2, Vue 3, Stripe PHP SDK, Tailwind CSS v4 (003-stripe-payment-processing)
+- PostgreSQL database with payment_collections, payment_items, and payment_transactions tables (003-stripe-payment-processing)
 
 ## Recent Changes
 - 001-foundation-setup: Added PHP 8.3, TypeScript 5.3 + Laravel 12, Inertia.js v2, Vue 3, shadcn-vue, Stripe PHP SDK, Tailwind CSS v4
