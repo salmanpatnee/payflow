@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, nextTick } from 'vue';
 import { Plus, Trash2, GripVertical } from 'lucide-vue-next';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -38,13 +38,15 @@ const items = computed({
     set: (value) => emit('update:modelValue', value),
 });
 
+const itemsContainer = ref<HTMLDivElement>();
+
 const itemTypes = [
     { value: 'service', label: 'Service' },
     { value: 'product', label: 'Product' },
     { value: 'fee', label: 'Fee' },
 ];
 
-const addItem = () => {
+const addItem = async () => {
     items.value = [
         ...items.value,
         {
@@ -55,6 +57,24 @@ const addItem = () => {
             type: 'service',
         },
     ];
+
+    // Scroll to the newly added item header
+    await nextTick();
+    if (itemsContainer.value) {
+        const lastItem = itemsContainer.value.lastElementChild as HTMLElement;
+        if (lastItem) {
+            // Scroll to the item header (first child) instead of the entire card
+            const itemHeader = lastItem.firstElementChild as HTMLElement;
+            if (itemHeader) {
+                itemHeader.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+            // Add a brief highlight effect to the entire card
+            lastItem.classList.add('highlight-new');
+            setTimeout(() => {
+                lastItem.classList.remove('highlight-new');
+            }, 2000);
+        }
+    }
 };
 
 const removeItem = (index: number) => {
@@ -88,72 +108,79 @@ const formatCurrency = (amount: number) => {
 </script>
 
 <template>
-    <div class="space-y-6">
+    <div class="space-y-4">
         <div class="flex items-center justify-between">
             <div>
-                <h3 class="text-lg font-semibold">Payment Items</h3>
-                <p class="mt-1 text-sm text-muted-foreground">
+                <h3 class="text-base font-bold text-foreground">Payment Items</h3>
+                <p class="text-xs text-muted-foreground">
                     Add items to this collection
                 </p>
             </div>
-            <Button type="button" variant="outline" size="sm" @click="addItem" class="gap-2">
-                <Plus class="h-4 w-4" />
+            <Button type="button" size="sm" @click="addItem" class="gap-1.5 h-8 text-xs">
+                <Plus class="h-3.5 w-3.5" />
                 Add Item
             </Button>
         </div>
 
-        <div v-if="items.length === 0" class="rounded-lg border-2 border-dashed border-border/60 bg-muted/20 p-12 text-center">
+        <div v-if="items.length === 0" class="rounded-lg border-2 border-dashed border-primary/30 bg-primary/5 p-8 text-center">
             <div class="mx-auto max-w-sm">
-                <h3 class="font-semibold text-foreground">No items yet</h3>
-                <p class="mt-2 text-sm text-muted-foreground">
+                <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 mb-3">
+                    <Plus class="h-6 w-6 text-primary" />
+                </div>
+                <h3 class="text-sm font-bold text-foreground">No items yet</h3>
+                <p class="mt-1 text-xs text-muted-foreground">
                     Get started by adding your first payment item to this collection.
                 </p>
                 <Button
                     type="button"
-                    variant="default"
                     size="sm"
                     @click="addItem"
-                    class="mt-4 gap-2"
+                    class="mt-4 gap-1.5"
                 >
-                    <Plus class="h-4 w-4" />
+                    <Plus class="h-3.5 w-3.5" />
                     Add First Item
                 </Button>
             </div>
         </div>
 
-        <div v-else class="space-y-4">
+        <div v-else ref="itemsContainer" class="space-y-3">
             <div
                 v-for="(item, index) in items"
                 :key="index"
-                class="group relative rounded-lg border border-border/50 bg-card p-6 shadow-sm transition-all hover:shadow-md hover:border-border"
+                class="item-card group relative rounded-lg border border-border bg-card p-4 shadow-sm transition-all hover:border-primary/30 hover:shadow-md"
             >
                 <!-- Item Header -->
                 <div class="mb-4 flex items-start justify-between">
-                    <div class="flex items-center gap-3">
-                        <div class="flex h-8 w-8 items-center justify-center rounded-md bg-muted text-sm font-semibold text-muted-foreground">
+                    <div class="flex items-center gap-2">
+                        <div class="flex h-8 w-8 items-center justify-center rounded-md bg-primary font-mono text-sm font-bold text-primary-foreground">
                             {{ index + 1 }}
                         </div>
-                        <span class="font-medium text-sm text-muted-foreground">
-                            Item #{{ index + 1 }}
-                        </span>
+                        <div>
+                            <span class="block text-xs font-bold uppercase tracking-wide text-foreground">
+                                Item #{{ index + 1 }}
+                            </span>
+                            <span class="block text-xs text-muted-foreground capitalize">
+                                {{ item.type || 'Service' }}
+                            </span>
+                        </div>
                     </div>
                     <Button
                         type="button"
                         variant="ghost"
                         size="sm"
                         @click="removeItem(index)"
-                        class="gap-2 text-destructive opacity-0 group-hover:opacity-100 transition-opacity hover:text-destructive"
+                        class="gap-1.5 h-7 text-xs text-destructive opacity-0 group-hover:opacity-100 transition-opacity hover:text-destructive hover:bg-destructive/10"
                     >
-                        <Trash2 class="h-4 w-4" />
+                        <Trash2 class="h-3.5 w-3.5" />
                         Remove
                     </Button>
                 </div>
 
                 <!-- Item Fields -->
-                <div class="grid gap-6 md:grid-cols-2">
+                <div class="grid gap-3 md:grid-cols-2">
                     <!-- Name -->
-                    <div class="space-y-2">
-                        <Label :for="`item-name-${index}`">
+                    <div class="space-y-1.5">
+                        <Label :for="`item-name-${index}`" class="text-xs font-medium">
                             Item Name <span class="text-destructive">*</span>
                         </Label>
                         <Input
@@ -161,18 +188,18 @@ const formatCurrency = (amount: number) => {
                             v-model="item.name"
                             :name="`items[${index}][name]`"
                             placeholder="e.g., Web Development Service"
-                            class="transition-all focus:ring-2 focus:ring-ring"
+                            class="input-stripe h-9 text-sm"
                         />
                         <InputError :message="getError('name', index)" />
                     </div>
 
                     <!-- Type -->
-                    <div class="space-y-2">
-                        <Label :for="`item-type-${index}`">
+                    <div class="space-y-1.5">
+                        <Label :for="`item-type-${index}`" class="text-xs font-medium">
                             Type <span class="text-destructive">*</span>
                         </Label>
                         <Select v-model="item.type" :name="`items[${index}][type]`">
-                            <SelectTrigger :id="`item-type-${index}`">
+                            <SelectTrigger :id="`item-type-${index}`" class="h-9 text-sm">
                                 <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
@@ -189,8 +216,8 @@ const formatCurrency = (amount: number) => {
                     </div>
 
                     <!-- Description -->
-                    <div class="space-y-2 md:col-span-2">
-                        <Label :for="`item-description-${index}`">
+                    <div class="space-y-1.5 md:col-span-2">
+                        <Label :for="`item-description-${index}`" class="text-xs font-medium">
                             Description
                         </Label>
                         <Input
@@ -198,17 +225,18 @@ const formatCurrency = (amount: number) => {
                             v-model="item.description"
                             :name="`items[${index}][description]`"
                             placeholder="Brief description of this item"
+                            class="input-stripe h-9 text-sm"
                         />
                         <InputError :message="getError('description', index)" />
                     </div>
 
                     <!-- Price -->
-                    <div class="space-y-2">
-                        <Label :for="`item-price-${index}`">
+                    <div class="space-y-1.5">
+                        <Label :for="`item-price-${index}`" class="text-xs font-medium">
                             Price <span class="text-destructive">*</span>
                         </Label>
                         <div class="relative">
-                            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
+                            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-medium text-muted-foreground">
                                 $
                             </span>
                             <Input
@@ -219,15 +247,15 @@ const formatCurrency = (amount: number) => {
                                 step="0.01"
                                 min="0"
                                 placeholder="0.00"
-                                class="pl-7 font-mono transition-all focus:ring-2 focus:ring-ring"
+                                class="input-stripe h-9 pl-7 font-mono text-sm"
                             />
                         </div>
                         <InputError :message="getError('price', index)" />
                     </div>
 
                     <!-- Quantity -->
-                    <div class="space-y-2">
-                        <Label :for="`item-quantity-${index}`">
+                    <div class="space-y-1.5">
+                        <Label :for="`item-quantity-${index}`" class="text-xs font-medium">
                             Quantity <span class="text-destructive">*</span>
                         </Label>
                         <Input
@@ -237,17 +265,17 @@ const formatCurrency = (amount: number) => {
                             type="number"
                             min="1"
                             placeholder="1"
-                            class="font-mono transition-all focus:ring-2 focus:ring-ring"
+                            class="input-stripe h-9 font-mono text-sm"
                         />
                         <InputError :message="getError('quantity', index)" />
                     </div>
                 </div>
 
                 <!-- Item Subtotal -->
-                <div class="mt-4 flex justify-end border-t border-border/50 pt-4">
+                <div class="mt-3 flex justify-end border-t border-border pt-3">
                     <div class="text-right">
-                        <span class="text-sm text-muted-foreground">Subtotal:</span>
-                        <span class="ml-3 font-mono text-lg font-semibold text-foreground">
+                        <span class="text-xs font-medium uppercase tracking-wide text-muted-foreground">Subtotal:</span>
+                        <span class="ml-3 font-mono text-lg font-bold text-foreground">
                             {{ formatCurrency(calculateItemTotal(item)) }}
                         </span>
                     </div>
@@ -255,20 +283,28 @@ const formatCurrency = (amount: number) => {
             </div>
 
             <!-- Grand Total -->
-            <div class="rounded-lg border border-border/50 bg-muted/30 p-6">
+            <div class="rounded-lg border-2 border-primary/20 bg-primary/5 p-4">
                 <div class="flex items-center justify-between">
                     <div>
-                        <h4 class="font-semibold text-foreground">Collection Total</h4>
-                        <p class="mt-1 text-sm text-muted-foreground">
+                        <h4 class="text-xs font-bold uppercase tracking-wide text-foreground">Collection Total</h4>
+                        <p class="text-xs text-muted-foreground">
                             {{ items.length }} {{ items.length === 1 ? 'item' : 'items' }}
                         </p>
                     </div>
                     <div class="text-right">
-                        <div class="font-mono text-3xl font-bold text-foreground">
+                        <div class="font-mono text-3xl font-bold text-primary">
                             {{ formatCurrency(calculateGrandTotal) }}
                         </div>
                     </div>
                 </div>
+            </div>
+
+            <!-- Add Another Item Button -->
+            <div class="flex justify-center pt-1">
+                <Button type="button" size="sm" @click="addItem" class="gap-1.5 h-9">
+                    <Plus class="h-4 w-4" />
+                    Add Another Item
+                </Button>
             </div>
         </div>
     </div>
@@ -279,7 +315,7 @@ const formatCurrency = (amount: number) => {
 @keyframes slideIn {
     from {
         opacity: 0;
-        transform: translateY(-8px);
+        transform: translateY(-12px);
     }
     to {
         opacity: 1;
@@ -287,7 +323,22 @@ const formatCurrency = (amount: number) => {
     }
 }
 
-.group {
-    animation: slideIn 0.3s ease-out;
+/* Highlight new item */
+@keyframes highlightPulse {
+    0%, 100% {
+        box-shadow: 0 0 0 0 hsl(243 75% 59% / 0.4);
+    }
+    50% {
+        box-shadow: 0 0 0 8px hsl(243 75% 59% / 0);
+    }
+}
+
+.item-card {
+    animation: slideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.highlight-new {
+    animation: highlightPulse 1s ease-out 2;
+    border-color: hsl(243 75% 59%);
 }
 </style>

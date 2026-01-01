@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Models\PaymentItem;
-use App\Models\PaymentTransaction;
 use Stripe\Exception\ApiErrorException;
 use Stripe\PaymentIntent;
 use Stripe\StripeClient;
@@ -83,8 +82,7 @@ class StripePaymentService
                 'status' => 'processing',
             ]);
 
-            // Record transaction
-            $this->recordTransaction($paymentItem, $paymentIntent);
+            // Note: Transaction will be recorded by webhook when payment succeeds/fails
 
             // Log performance metrics
             $duration = (microtime(true) - $startTime) * 1000; // Convert to milliseconds
@@ -130,8 +128,7 @@ class StripePaymentService
             // Retrieve the PaymentIntent to get current status
             $paymentIntent = $this->stripe->paymentIntents->retrieve($paymentIntentId);
 
-            // Record transaction
-            $this->recordTransaction($paymentItem, $paymentIntent);
+            // Note: Transaction will be recorded by webhook when payment succeeds/fails
 
             if ($paymentIntent->status === 'succeeded') {
                 // Update payment item status
@@ -261,8 +258,7 @@ class StripePaymentService
             'paid_at' => now(),
         ]);
 
-        // Record transaction
-        $this->recordTransaction($paymentItem, $paymentIntent);
+        // Note: Transaction record created by ProcessStripeWebhookJob
 
         \Log::info('Payment succeeded via webhook', [
             'payment_item_id' => $paymentItem->id,
@@ -294,8 +290,7 @@ class StripePaymentService
             'status' => 'failed',
         ]);
 
-        // Record transaction with failure details
-        $this->recordTransaction($paymentItem, $paymentIntent);
+        // Note: Transaction record created by ProcessStripeWebhookJob
 
         \Log::info('Payment failed via webhook', [
             'payment_item_id' => $paymentItem->id,
@@ -330,28 +325,9 @@ class StripePaymentService
             ]);
         }
 
-        // Record transaction
-        $this->recordTransaction($paymentItem, $paymentIntent);
+        // Note: Transaction record created by ProcessStripeWebhookJob
 
         return true;
-    }
-
-    /**
-     * Record a payment transaction
-     */
-    private function recordTransaction(PaymentItem $paymentItem, PaymentIntent $paymentIntent): void
-    {
-        PaymentTransaction::create([
-            'payment_item_id' => $paymentItem->id,
-            'stripe_response' => $paymentIntent->toArray(),
-            'status' => $paymentIntent->status,
-            'amount' => $this->convertFromStripeAmount($paymentIntent->amount, $paymentIntent->currency),
-            'currency' => $paymentIntent->currency,
-            'payment_method' => $paymentIntent->payment_method_types[0] ?? null,
-            'failure_code' => $paymentIntent->last_payment_error?->code,
-            'failure_message' => $paymentIntent->last_payment_error?->message,
-            'created_at' => now(),
-        ]);
     }
 
     /**
@@ -421,8 +397,7 @@ class StripePaymentService
                 'status' => 'processing',
             ]);
 
-            // Record transaction
-            $this->recordTransaction($paymentItem, $paymentIntent);
+            // Note: Transaction will be recorded by webhook when payment succeeds/fails
 
             return [
                 'client_secret' => $paymentIntent->client_secret,

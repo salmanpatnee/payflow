@@ -15,7 +15,7 @@ import {
     TableRow,
 } from '@/components/ui/table';
 import AppLayout from '@/layouts/AppLayout.vue';
-import PaymentLinkGenerator from '@/Components/PaymentLinkGenerator.vue';
+import PaymentLinkGenerator from '@/components/PaymentLinkGenerator.vue';
 import { type BreadcrumbItem } from '@/types';
 
 interface PaymentItem {
@@ -60,7 +60,10 @@ const statusVariant = (status: string) => {
         case 'active':
             return 'default';
         case 'completed':
-            return 'secondary';
+            return 'success';
+        case 'pending':
+        case 'partially_paid':
+            return 'warning';
         case 'expired':
             return 'destructive';
         default:
@@ -115,34 +118,33 @@ const calculateItemTotal = (item: PaymentItem) => {
             <!-- Header -->
             <div class="border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
                 <div class="flex h-20 items-center justify-between px-8">
-                    <div class="flex items-center gap-4">
+                    <div class="flex items-center gap-3">
+                        <div>
+                            <h1 class="text-3xl font-bold tracking-tight">
+                                {{ collection.name }}
+                            </h1>
+                            <p class="mt-1 text-sm text-muted-foreground">
+                                Collection details and items
+                            </p>
+                        </div>
+                        <Badge :variant="statusVariant(collection.status)" class="ml-2">
+                            {{ collection.status }}
+                        </Badge>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <Link :href="`/admin/payment-collections/${collection.id}/edit`">
+                            <Button size="sm" variant="outline" class="gap-2">
+                                <Edit class="h-4 w-4" />
+                                Edit
+                            </Button>
+                        </Link>
                         <Link href="/admin/payment-collections">
                             <Button variant="ghost" size="sm" class="gap-2">
                                 <ArrowLeft class="h-4 w-4" />
                                 Back
                             </Button>
                         </Link>
-                        <div class="h-6 w-px bg-border"></div>
-                        <div class="flex items-center gap-3">
-                            <div>
-                                <h1 class="text-3xl font-bold tracking-tight">
-                                    {{ collection.name }}
-                                </h1>
-                                <p class="mt-1 text-sm text-muted-foreground">
-                                    Collection details and items
-                                </p>
-                            </div>
-                            <Badge :variant="statusVariant(collection.status)" class="ml-2">
-                                {{ collection.status }}
-                            </Badge>
-                        </div>
                     </div>
-                    <Link :href="`/admin/payment-collections/${collection.id}/edit`">
-                        <Button size="sm" variant="outline" class="gap-2">
-                            <Edit class="h-4 w-4" />
-                            Edit
-                        </Button>
-                    </Link>
                 </div>
             </div>
 
@@ -176,12 +178,12 @@ const calculateItemTotal = (item: PaymentItem) => {
                             <div class="overflow-x-auto">
                                 <Table>
                                     <TableHeader>
-                                        <TableRow class="border-b border-border/50 bg-muted/20">
-                                            <TableHead class="font-semibold">Item</TableHead>
-                                            <TableHead class="font-semibold">Type</TableHead>
-                                            <TableHead class="font-semibold text-right">Price</TableHead>
-                                            <TableHead class="font-semibold text-right">Qty</TableHead>
-                                            <TableHead class="font-semibold text-right">Total</TableHead>
+                                        <TableRow class="border-b-2 border-primary/20 bg-primary hover:bg-primary">
+                                            <TableHead class="h-12 px-4 text-sm font-bold uppercase tracking-wider text-primary-foreground">Item</TableHead>
+                                            <TableHead class="h-12 px-4 text-sm font-bold uppercase tracking-wider text-primary-foreground">Type</TableHead>
+                                            <TableHead class="h-12 px-4 text-sm font-bold uppercase tracking-wider text-primary-foreground text-right">Price</TableHead>
+                                            <TableHead class="h-12 px-4 text-sm font-bold uppercase tracking-wider text-primary-foreground text-right">Qty</TableHead>
+                                            <TableHead class="h-12 px-4 text-sm font-bold uppercase tracking-wider text-primary-foreground text-right">Total</TableHead>
                                         </TableRow>
                                     </TableHeader>
                                     <TableBody>

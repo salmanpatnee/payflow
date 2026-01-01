@@ -49,31 +49,36 @@ const initializeStripe = async () => {
     }
     console.log('Stripe loaded successfully')
 
-    // Create Elements instance with custom styling
+    // Create Elements instance with Stripe-branded styling
     elements.value = stripe.value.elements({
       appearance: {
         theme: 'stripe',
         variables: {
-          colorPrimary: '#059669',
+          colorPrimary: 'hsl(243 75% 59%)',  // Stripe purple
           colorBackground: '#ffffff',
-          colorText: '#1c1917',
-          colorDanger: '#dc2626',
-          fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+          colorText: '#1a1f36',
+          colorDanger: '#df1b41',
+          fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Ubuntu, sans-serif',
+          fontSizeBase: '16px',
           spacingUnit: '4px',
-          borderRadius: '8px',
+          borderRadius: '6px',
         },
         rules: {
           '.Input': {
-            border: '1px solid #e7e5e4',
-            boxShadow: '0 1px 2px 0 rgb(0 0 0 / 0.05)',
+            border: '1px solid #e3e8ee',
+            padding: '12px',
+            boxShadow: '0 1px 3px 0 rgba(50, 50, 93, 0.05)',
           },
           '.Input:focus': {
-            border: '1px solid #059669',
-            boxShadow: '0 0 0 3px rgb(5 150 105 / 0.1)',
+            border: '1px solid hsl(243 75% 59%)',
+            boxShadow: '0 0 0 3px hsl(243 75% 59% / 0.1)',
+            outline: 'none',
           },
           '.Label': {
-            fontWeight: '500',
+            fontWeight: '600',
+            fontSize: '14px',
             marginBottom: '8px',
+            color: '#1a1f36',
           }
         }
       }
@@ -216,22 +221,38 @@ onMounted(() => {
 
 <template>
   <div
-    class="space-y-4"
+    class="space-y-6"
     :aria-busy="isProcessing"
     role="form"
     aria-label="Payment form"
   >
+    <!-- Payment Methods Header -->
+    <div class="flex items-center justify-between pb-4 border-b border-gray-200">
+      <div class="flex items-center gap-2">
+        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path>
+        </svg>
+        <span class="text-sm font-semibold text-gray-700">Payment method</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <img src="https://js.stripe.com/v3/fingerprinted/img/visa-729c05c240c4bdb47b03ac81d9945bfe.svg" alt="Visa" class="h-6" />
+        <img src="https://js.stripe.com/v3/fingerprinted/img/mastercard-4d8844094130711885b5e41b28c9848f.svg" alt="Mastercard" class="h-6" />
+        <img src="https://js.stripe.com/v3/fingerprinted/img/amex-a49b82f46c5cd6a96a6e418a6ca1717c.svg" alt="American Express" class="h-6" />
+        <img src="https://js.stripe.com/v3/fingerprinted/img/discover-ac52cd46f89fa40a29a0bfb954e33173.svg" alt="Discover" class="h-6" />
+      </div>
+    </div>
+
     <!-- Card Element Container -->
     <div>
       <label
         :for="`card-element-${paymentItem.id}`"
-        class="block text-sm font-medium text-stone-700 dark:text-zinc-300 mb-2"
+        class="block text-sm font-semibold text-gray-700 mb-3"
       >
-        Card Information
+        Card information
       </label>
       <div
         :id="`card-element-${paymentItem.id}`"
-        class="p-4 bg-white dark:bg-zinc-900 border border-stone-300 dark:border-zinc-700 rounded-lg shadow-sm transition-all duration-200"
+        class="p-3 bg-white border border-gray-300 rounded-md shadow-sm transition-all duration-200 hover:border-gray-400"
         :class="{ 'opacity-50': isProcessing }"
         role="textbox"
         aria-label="Secure card input"
@@ -261,38 +282,54 @@ onMounted(() => {
       :disabled="isProcessing || !cardElementMounted"
       :aria-label="isRetry ? 'Retry payment' : 'Complete secure payment'"
       :aria-busy="isProcessing"
-      class="w-full relative overflow-hidden group"
+      class="w-full relative overflow-hidden group cursor-pointer"
     >
       <div
-        class="relative px-6 py-3.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 dark:from-emerald-500 dark:to-teal-500 dark:hover:from-emerald-600 dark:hover:to-teal-600 rounded-lg shadow-lg shadow-emerald-900/20 dark:shadow-emerald-950/40 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+        class="relative px-6 py-3.5 font-semibold rounded-md transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+        :class="isProcessing || !cardElementMounted ? 'bg-[hsl(243_75%_59%_/_0.6)] cursor-not-allowed' : 'bg-[hsl(243_75%_59%)] hover:bg-[hsl(243_75%_54%)] shadow-sm'"
       >
-        <span v-if="!isProcessing" class="flex items-center justify-center gap-2 text-white font-semibold tracking-wide">
-          <svg v-if="!isRetry" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+        <span v-if="!isProcessing" class="flex items-center justify-center gap-2 text-white">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
           </svg>
-          <svg v-else class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-          </svg>
-          {{ isRetry ? 'Retry Payment' : 'Complete Payment' }}
+          {{ isRetry ? 'Retry Payment' : 'Pay now' }}
         </span>
-        <span v-else class="flex items-center justify-center gap-3 text-white font-semibold">
+        <span v-else class="flex items-center justify-center gap-3 text-white">
           <svg class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24" aria-hidden="true">
             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
           </svg>
           <span class="sr-only">Processing payment, please wait</span>
-          Processing Payment...
+          Processing...
         </span>
       </div>
-
-      <!-- Button shine effect -->
-      <div class="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
     </button>
 
-    <!-- Security Note -->
-    <p class="text-xs text-center text-stone-500 dark:text-zinc-500">
-      Your payment is secured with 256-bit encryption
-    </p>
+    <!-- Security & Stripe Branding -->
+    <div class="pt-4 border-t border-gray-200 space-y-3">
+      <!-- Powered by Stripe -->
+      <div class="flex items-center justify-center gap-1.5">
+        <span class="text-xs text-gray-500">Powered by</span>
+        <span class="text-sm font-semibold text-[#635BFF]">Stripe</span>
+      </div>
+
+      <!-- Security Indicators -->
+      <div class="flex items-center justify-center gap-4 text-xs text-gray-500">
+        <div class="flex items-center gap-1.5">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+          </svg>
+          <span>Secure 256-bit SSL</span>
+        </div>
+        <span class="text-gray-300">•</span>
+        <div class="flex items-center gap-1.5">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+          </svg>
+          <span>PCI Compliant</span>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 

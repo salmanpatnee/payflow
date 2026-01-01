@@ -64,7 +64,7 @@ class PaymentCollectionController extends Controller
             $request->user()->id
         );
 
-        return redirect()->route('admin.payment-collections.index')
+        return redirect()->route('admin.payment-collections.show', $collection->id)
             ->with('success', 'Payment collection created successfully.');
     }
 

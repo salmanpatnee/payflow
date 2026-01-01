@@ -78,27 +78,24 @@ const cancel = () => {
             <!-- Header -->
             <div class="border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
                 <div class="flex h-20 items-center justify-between px-8">
-                    <div class="flex items-center gap-4">
-                        <Link href="/admin/payment-collections">
-                            <Button variant="ghost" size="sm" class="gap-2">
-                                <ArrowLeft class="h-4 w-4" />
-                                Back
-                            </Button>
-                        </Link>
-                        <div class="h-6 w-px bg-border"></div>
-                        <div>
-                            <h1 class="text-3xl font-bold tracking-tight">
-                                {{ isEditing ? 'Edit Collection' : 'New Collection' }}
-                            </h1>
-                            <p class="mt-1 text-sm text-muted-foreground">
-                                {{
-                                    isEditing
-                                        ? 'Update the details of your payment collection'
-                                        : 'Create a new payment collection with items'
-                                }}
-                            </p>
-                        </div>
+                    <div>
+                        <h1 class="text-3xl font-bold tracking-tight">
+                            {{ isEditing ? 'Edit Collection' : 'New Collection' }}
+                        </h1>
+                        <p class="mt-1 text-sm text-muted-foreground">
+                            {{
+                                isEditing
+                                    ? 'Update the details of your payment collection'
+                                    : 'Create a new payment collection with items'
+                            }}
+                        </p>
                     </div>
+                    <Link href="/admin/payment-collections">
+                        <Button variant="ghost" size="sm" class="gap-2">
+                            <ArrowLeft class="h-4 w-4" />
+                            Back
+                        </Button>
+                    </Link>
                 </div>
             </div>
 
