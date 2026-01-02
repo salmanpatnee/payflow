@@ -146,16 +146,16 @@ loadPaymentLink()
 </script>
 
 <template>
-  <Card class="overflow-hidden border-border/50 shadow-sm">
-    <div class="border-b border-border/50 bg-muted/30 px-6 py-4">
-      <div class="flex items-center justify-between">
-        <h2 class="font-semibold text-foreground">Payment Link</h2>
+  <Card class="overflow-hidden border-border/50 shadow-sm pt-0">
+    <div class="border-b border-border/50 bg-muted/30 px-6 py-4 bg-primary hover:bg-primary">
+      <div class="flex items-center justify-between ">
+        <h2 class="font-semibold text-primary-foreground">Payment Link</h2>
         <Badge v-if="paymentLink && isActive" variant="default">Active</Badge>
         <Badge v-else-if="paymentLink" variant="destructive">Expired</Badge>
       </div>
     </div>
 
-    <div class="p-6">
+    <div class="p-6 py-0">
       <!-- Error State -->
       <div v-if="error" class="mb-4 flex items-start gap-3 rounded-lg border border-destructive/30 bg-destructive/5 p-4">
         <AlertCircle class="mt-0.5 h-5 w-5 text-destructive flex-shrink-0" />

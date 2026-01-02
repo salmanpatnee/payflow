@@ -7,9 +7,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
 import AuthBase from '@/layouts/AuthLayout.vue';
-import { register } from '@/routes';
 import { store } from '@/routes/login';
-import { request } from '@/routes/password';
+import { email } from '@/routes/password';
 import { Form, Head } from '@inertiajs/vue3';
 
 defineProps<{
@@ -61,7 +60,7 @@ defineProps<{
                         <Label for="password" class="text-sm font-medium">Password</Label>
                         <TextLink
                             v-if="canResetPassword"
-                            :href="request()"
+                            :href="email()"
                             class="text-xs font-medium text-primary hover:text-primary/80"
                             :tabindex="5"
                         >
@@ -100,15 +99,6 @@ defineProps<{
                 </Button>
             </div>
 
-            <div
-                class="text-center text-sm text-muted-foreground"
-                v-if="canRegister"
-            >
-                Don't have an account?
-                <TextLink :href="register()" :tabindex="5" class="font-medium text-foreground hover:text-primary">
-                    Sign up
-                </TextLink>
-            </div>
         </Form>
     </AuthBase>
 </template>

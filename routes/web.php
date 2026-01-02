@@ -6,10 +6,17 @@ use Inertia\Inertia;
 use Laravel\Fortify\Features;
 
 Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canRegister' => Features::enabled(Features::registration()),
-    ]);
+    return Inertia::render('Welcome');
 })->name('home');
+
+// Custom login route
+Route::get('/payflow_login', function () {
+    return Inertia::render('auth/Login', [
+        'canResetPassword' => Features::enabled(Features::resetPasswords()),
+        'canRegister' => Features::enabled(Features::registration()),
+        'status' => request()->session()->get('status'),
+    ]);
+})->name('payflow_login');
 
 Route::get('dashboard', [\App\Http\Controllers\DashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])
@@ -23,6 +30,10 @@ Route::get('/pay/{token}', [\App\Http\Controllers\PaymentLinkController::class, 
 Route::get('/pay/{token}/item/{itemId}', [\App\Http\Controllers\PaymentLinkController::class, 'showItem'])
     ->middleware('web')
     ->name('pay.item');
+
+Route::get('/pay/{token}/thank-you', [\App\Http\Controllers\PaymentLinkController::class, 'thankYou'])
+    ->middleware('web')
+    ->name('pay.thank-you');
 
 // Payment collection routes for Stripe processing
 Route::prefix('payment')->name('payment.')->middleware(\App\Http\Middleware\SecurePaymentHeaders::class)->group(function () {

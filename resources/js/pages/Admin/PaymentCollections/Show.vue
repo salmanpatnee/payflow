@@ -154,9 +154,9 @@ const calculateItemTotal = (item: PaymentItem) => {
                     <!-- Main Content -->
                     <div class="lg:col-span-2 space-y-6">
                         <!-- Description Card -->
-                        <Card v-if="collection.description" class="overflow-hidden border-border/50 shadow-sm">
-                            <div class="border-b border-border/50 bg-muted/30 px-6 py-4">
-                                <h2 class="font-semibold text-foreground">Description</h2>
+                        <Card v-if="collection.description" class="overflow-hidden border-border/50 shadow-sm pt-0">
+                            <div class="border-b border-border/50 bg-muted/30 px-6 py-4 border-b-2 border-primary/20 bg-primary hover:bg-primary">
+                                <h2 class="font-semibold text-primary-foreground">Description</h2>
                             </div>
                             <div class="p-6">
                                 <p class="text-foreground leading-relaxed">
@@ -166,7 +166,7 @@ const calculateItemTotal = (item: PaymentItem) => {
                         </Card>
 
                         <!-- Items Card -->
-                        <Card class="overflow-hidden border-border/50 shadow-sm">
+                        <Card class="overflow-hidden border-border/50 shadow-sm pt-0">
                             <div class="border-b border-border/50 bg-muted/30 px-6 py-4">
                                 <div class="flex items-center justify-between">
                                     <h2 class="font-semibold text-foreground">Payment Items</h2>
@@ -244,9 +244,9 @@ const calculateItemTotal = (item: PaymentItem) => {
                         <PaymentLinkGenerator :collectionId="collection.id" />
 
                         <!-- Metadata Card -->
-                        <Card class="overflow-hidden border-border/50 shadow-sm">
-                            <div class="border-b border-border/50 bg-muted/30 px-6 py-4">
-                                <h2 class="font-semibold text-foreground">Details</h2>
+                        <Card class="overflow-hidden border-border/50 shadow-sm pt-0">
+                            <div class="border-b border-border/50 bg-muted/30 px-6 py-4 bg-primary hover:bg-primary">
+                                <h2 class="font-semibold text-primary-foreground">Details</h2>
                             </div>
                             <div class="divide-y divide-border/50">
                                 <!-- UUID -->

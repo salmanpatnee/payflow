@@ -29,7 +29,6 @@ class PaymentCollectionRequest extends FormRequest
             'items.*.name' => ['required', 'string', 'max:255'],
             'items.*.description' => ['nullable', 'string', 'max:65535'],
             'items.*.price' => ['required', 'numeric', 'min:0'],
-            'items.*.quantity' => ['required', 'integer', 'min:1'],
             'items.*.type' => ['required', 'string', 'in:service,product,fee'],
         ];
     }
@@ -47,10 +46,8 @@ class PaymentCollectionRequest extends FormRequest
             'items.required' => 'At least one payment item is required.',
             'items.min' => 'At least one payment item is required.',
             'items.*.name.required' => 'Each item must have a name.',
-            'items.*.price.required' => 'Each item must have a price.',
-            'items.*.price.min' => 'Item price must be a positive number.',
-            'items.*.quantity.required' => 'Each item must have a quantity.',
-            'items.*.quantity.min' => 'Item quantity must be at least 1.',
+            'items.*.price.required' => 'Each item must have an amount.',
+            'items.*.price.min' => 'Item amount must be a positive number.',
             'items.*.type.required' => 'Each item must have a type.',
             'items.*.type.in' => 'Item type must be either service, product, or fee.',
         ];

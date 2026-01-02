@@ -1,16 +1,7 @@
 <script setup lang="ts">
-import { dashboard, login, register } from '@/routes';
+import { dashboard } from '@/routes';
 import { Head, Link } from '@inertiajs/vue3';
 import { CreditCard, Shield, Zap, ArrowRight, Check, TrendingUp, BarChart3, Lock } from 'lucide-vue-next';
-
-withDefaults(
-    defineProps<{
-        canRegister: boolean;
-    }>(),
-    {
-        canRegister: true,
-    },
-);
 </script>
 
 <template>
@@ -41,21 +32,6 @@ withDefaults(
                     >
                         Go to Dashboard
                     </Link>
-                    <template v-else>
-                        <Link
-                            :href="login()"
-                            class="inline-flex h-11 items-center justify-center rounded-xl px-6 font-medium text-foreground transition-all hover:bg-muted/80"
-                        >
-                            Log in
-                        </Link>
-                        <Link
-                            v-if="canRegister"
-                            :href="register()"
-                            class="inline-flex h-11 items-center justify-center rounded-xl bg-primary px-8 font-medium text-primary-foreground shadow-lg shadow-primary/25 transition-all hover:bg-primary/90 hover:shadow-xl hover:shadow-primary/30 hover:-translate-y-0.5 active:scale-[0.98]"
-                        >
-                            Get Started
-                        </Link>
-                    </template>
                 </div>
             </div>
         </nav>
@@ -86,15 +62,7 @@ withDefaults(
                 <!-- CTA Buttons -->
                 <div class="flex flex-col items-center justify-center gap-4 sm:flex-row" style="animation: fadeInUp 0.6s ease-out 0.4s backwards;">
                     <Link
-                        v-if="!$page.props.auth.user && canRegister"
-                        :href="register()"
-                        class="group inline-flex h-14 items-center justify-center gap-3 rounded-xl bg-gradient-to-r from-primary to-primary/90 px-10 text-base font-semibold text-primary-foreground shadow-xl shadow-primary/30 transition-all hover:shadow-2xl hover:shadow-primary/40 hover:-translate-y-1 active:scale-[0.98]"
-                    >
-                        Start Free Today
-                        <ArrowRight class="h-5 w-5 transition-transform group-hover:translate-x-1" />
-                    </Link>
-                    <Link
-                        v-else
+                        v-if="$page.props.auth.user"
                         :href="dashboard()"
                         class="group inline-flex h-14 items-center justify-center gap-3 rounded-xl bg-gradient-to-r from-primary to-primary/90 px-10 text-base font-semibold text-primary-foreground shadow-xl shadow-primary/30 transition-all hover:shadow-2xl hover:shadow-primary/40 hover:-translate-y-1 active:scale-[0.98]"
                     >

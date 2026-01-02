@@ -65,7 +65,7 @@ class PaymentCollectionService
                         'name' => $itemData['name'],
                         'description' => $itemData['description'] ?? null,
                         'price' => $itemData['price'],
-                        'quantity' => $itemData['quantity'],
+                        'quantity' => $itemData['quantity'] ?? 1,
                         'type' => $itemData['type'],
                         'sort_order' => $index,
                     ]);
@@ -122,7 +122,7 @@ class PaymentCollectionService
                     'name' => $itemData['name'],
                     'description' => $itemData['description'] ?? null,
                     'price' => $itemData['price'],
-                    'quantity' => $itemData['quantity'],
+                    'quantity' => $itemData['quantity'] ?? 1,
                     'type' => $itemData['type'],
                     'sort_order' => $index,
                 ]);
@@ -133,7 +133,7 @@ class PaymentCollectionService
                     'name' => $itemData['name'],
                     'description' => $itemData['description'] ?? null,
                     'price' => $itemData['price'],
-                    'quantity' => $itemData['quantity'],
+                    'quantity' => $itemData['quantity'] ?? 1,
                     'type' => $itemData['type'],
                     'sort_order' => $index,
                 ]);

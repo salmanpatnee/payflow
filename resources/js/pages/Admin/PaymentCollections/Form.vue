@@ -103,15 +103,15 @@ const cancel = () => {
             <div class="mx-auto max-w-5xl px-8 py-8">
                 <form @submit.prevent="handleSubmit" class="space-y-8">
                     <!-- Collection Details Card -->
-                    <Card class="overflow-hidden border-border/50 shadow-sm">
-                        <div class="border-b border-border/50 bg-muted/30 px-6 py-4">
-                            <h2 class="font-semibold text-foreground">Collection Details</h2>
-                            <p class="mt-1 text-sm text-muted-foreground">
+                    <Card class="overflow-hidden border-border/50 shadow-sm pt-0">
+                        <div class="border-b border-border/50 bg-muted/30 px-6 py-4 border-b-2 border-primary/20 bg-primary hover:bg-primary transition-colors ">
+                            <h2 class="font-semibold text-primary-foreground">Collection Details</h2>
+                            <p class="mt-1 text-sm text-primary-foreground">
                                 Basic information about this payment collection
                             </p>
                         </div>
 
-                        <div class="p-6 space-y-6">
+                        <div class="p-6 space-y-6 py-0">
                             <!-- Collection Name -->
                             <div class="space-y-2">
                                 <Label for="name">
@@ -155,7 +155,7 @@ const cancel = () => {
 
                     <!-- Payment Items Card -->
                     <Card class="overflow-hidden border-border/50 shadow-sm">
-                        <div class="p-6">
+                        <div class="p-6 py-0">
                             <RepeatableItems
                                 v-model="form.items"
                                 :errors="errors"

@@ -18,7 +18,6 @@ export interface PaymentItem {
     name: string;
     description: string;
     price: number | string;
-    quantity: number | string;
     type: string;
 }
 
@@ -53,7 +52,6 @@ const addItem = async () => {
             name: '',
             description: '',
             price: '',
-            quantity: 1,
             type: 'service',
         },
     ];
@@ -89,8 +87,7 @@ const getError = (field: string, index: number) => {
 
 const calculateItemTotal = (item: PaymentItem) => {
     const price = typeof item.price === 'string' ? parseFloat(item.price) || 0 : item.price;
-    const quantity = typeof item.quantity === 'string' ? parseInt(item.quantity) || 0 : item.quantity;
-    return price * quantity;
+    return price;
 };
 
 const calculateGrandTotal = computed(() => {
@@ -233,7 +230,7 @@ const formatCurrency = (amount: number) => {
                     <!-- Price -->
                     <div class="space-y-1.5">
                         <Label :for="`item-price-${index}`" class="text-xs font-medium">
-                            Price <span class="text-destructive">*</span>
+                            Amount <span class="text-destructive">*</span>
                         </Label>
                         <div class="relative">
                             <span class="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-medium text-muted-foreground">
@@ -252,29 +249,12 @@ const formatCurrency = (amount: number) => {
                         </div>
                         <InputError :message="getError('price', index)" />
                     </div>
-
-                    <!-- Quantity -->
-                    <div class="space-y-1.5">
-                        <Label :for="`item-quantity-${index}`" class="text-xs font-medium">
-                            Quantity <span class="text-destructive">*</span>
-                        </Label>
-                        <Input
-                            :id="`item-quantity-${index}`"
-                            v-model="item.quantity"
-                            :name="`items[${index}][quantity]`"
-                            type="number"
-                            min="1"
-                            placeholder="1"
-                            class="input-stripe h-9 font-mono text-sm"
-                        />
-                        <InputError :message="getError('quantity', index)" />
-                    </div>
                 </div>
 
-                <!-- Item Subtotal -->
+                <!-- Item Amount -->
                 <div class="mt-3 flex justify-end border-t border-border pt-3">
                     <div class="text-right">
-                        <span class="text-xs font-medium uppercase tracking-wide text-muted-foreground">Subtotal:</span>
+                        <span class="text-xs font-medium uppercase tracking-wide text-muted-foreground">Amount:</span>
                         <span class="ml-3 font-mono text-lg font-bold text-foreground">
                             {{ formatCurrency(calculateItemTotal(item)) }}
                         </span>

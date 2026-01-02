@@ -189,18 +189,10 @@ const handleSubmit = async () => {
       throw new Error(confirmData.error || 'Failed to confirm payment')
     }
 
-    // Payment successful - redirect based on collection status
+    // Payment successful - redirect to the URL provided by backend
+    // Backend determines if it's thank you page (all complete) or payment page (more to pay)
     if (confirmData.redirect_url) {
-      // Show success message briefly before redirect
-      const collectionStatus = confirmData.collection_status
-
-      if (collectionStatus?.all_completed) {
-        // All payments completed - redirect to collection page (will show thank you)
-        window.location.href = confirmData.redirect_url
-      } else {
-        // More payments remaining - redirect to collection page with status update
-        window.location.href = confirmData.redirect_url
-      }
+      window.location.href = confirmData.redirect_url
     } else {
       // Fallback: reload current page
       router.reload({ only: ['collection'] })
@@ -234,11 +226,8 @@ onMounted(() => {
         </svg>
         <span class="text-sm font-semibold text-gray-700">Payment method</span>
       </div>
-      <div class="flex items-center gap-2">
-        <img src="https://js.stripe.com/v3/fingerprinted/img/visa-729c05c240c4bdb47b03ac81d9945bfe.svg" alt="Visa" class="h-6" />
-        <img src="https://js.stripe.com/v3/fingerprinted/img/mastercard-4d8844094130711885b5e41b28c9848f.svg" alt="Mastercard" class="h-6" />
-        <img src="https://js.stripe.com/v3/fingerprinted/img/amex-a49b82f46c5cd6a96a6e418a6ca1717c.svg" alt="American Express" class="h-6" />
-        <img src="https://js.stripe.com/v3/fingerprinted/img/discover-ac52cd46f89fa40a29a0bfb954e33173.svg" alt="Discover" class="h-6" />
+      <div class="flex items-center">
+        <img src="/images/cards.webp" alt="Accepted cards: Visa, Mastercard, American Express, Discover" class="h-6" />
       </div>
     </div>
 

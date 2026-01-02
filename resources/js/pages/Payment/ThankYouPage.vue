@@ -10,7 +10,7 @@ const props = defineProps({
 })
 
 const totalAmount = computed(() => {
-  return props.collection.items.reduce((sum, item) => sum + item.amount, 0)
+  return props.collection.items.reduce((sum, item) => sum + parseFloat(item.amount || 0), 0)
 })
 
 const currency = computed(() => {
@@ -79,9 +79,12 @@ const formatCurrency = (amount, curr) => {
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                   </svg>
                   <h3 class="font-semibold text-stone-900 dark:text-zinc-100">
-                    {{ item.description }}
+                    {{ item.name }}
                   </h3>
                 </div>
+                <p v-if="item.description" class="text-sm text-stone-600 dark:text-zinc-400 ml-6">
+                  {{ item.description }}
+                </p>
                 <p v-if="item.paid_at" class="text-sm text-stone-500 dark:text-zinc-500 ml-6">
                   Paid on {{ new Date(item.paid_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric', hour: 'numeric', minute: 'numeric' }) }}
                 </p>
@@ -108,14 +111,7 @@ const formatCurrency = (amount, curr) => {
         </div>
 
         <!-- Additional Info -->
-        <div class="mt-8 text-center space-y-4" style="animation: fadeIn 0.6s ease-out 1s backwards;">
-          <div class="flex items-center justify-center gap-2 text-stone-600 dark:text-zinc-400">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
-            </svg>
-            <span class="text-sm">A confirmation email has been sent to you</span>
-          </div>
-
+        <div class="mt-8 text-center" style="animation: fadeIn 0.6s ease-out 1s backwards;">
           <p class="text-xs text-stone-500 dark:text-zinc-500">
             Transaction ID: {{ collection.uuid }}
           </p>

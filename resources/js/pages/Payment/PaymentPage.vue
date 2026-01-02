@@ -1,6 +1,6 @@
 <script setup>
 import { Head, router } from '@inertiajs/vue3'
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import StripePaymentForm from '@/Components/Payment/StripePaymentForm.vue'
 
 const props = defineProps({
@@ -84,6 +84,34 @@ const stopPolling = () => {
   }
 }
 
+// Watch for collection status changes and redirect to thank you when all completed
+watch(
+  () => props.collection.status,
+  (newStatus) => {
+    if (newStatus === 'completed' && !hasProcessingPayments.value) {
+      stopPolling()
+      // Redirect to thank you page after a short delay
+      setTimeout(() => {
+        router.visit(`/payment/${props.collection.uuid}/thank-you`)
+      }, 1500)
+    }
+  },
+  { immediate: true }
+)
+
+// Watch for processing payments and manage polling
+watch(
+  hasProcessingPayments,
+  (hasProcessing) => {
+    if (hasProcessing && !pollInterval.value) {
+      startPolling()
+    } else if (!hasProcessing && pollInterval.value) {
+      stopPolling()
+    }
+  },
+  { immediate: true }
+)
+
 // Start polling when component mounts
 onMounted(() => {
   startPolling()
@@ -92,21 +120,6 @@ onMounted(() => {
 // Clean up polling on unmount
 onUnmounted(() => {
   stopPolling()
-})
-
-// Watch for processing payments and auto-navigate to thank you when complete
-computed(() => {
-  if (props.collection.status === 'completed' && !hasProcessingPayments.value) {
-    stopPolling()
-    // Redirect to thank you page after a short delay
-    setTimeout(() => {
-      router.visit(`/payment/${props.collection.uuid}/thank-you`)
-    }, 1500)
-  } else if (hasProcessingPayments.value && !pollInterval.value) {
-    startPolling()
-  } else if (!hasProcessingPayments.value && pollInterval.value) {
-    stopPolling()
-  }
 })
 </script>
 
@@ -181,9 +194,12 @@ computed(() => {
                 </div>
 
                 <div class="p-6 pr-32">
-                  <h3 class="text-lg font-semibold text-stone-900 dark:text-zinc-100 mb-2">
-                    {{ item.description }}
+                  <h3 class="text-lg font-semibold text-stone-900 dark:text-zinc-100 mb-1">
+                    {{ item.name }}
                   </h3>
+                  <p v-if="item.description" class="text-sm text-stone-600 dark:text-zinc-400 mb-3">
+                    {{ item.description }}
+                  </p>
                   <div class="flex items-baseline gap-2">
                     <span class="text-3xl font-bold tabular-nums text-stone-900 dark:text-zinc-100" style="font-family: 'Fraunces', Georgia, serif;">
                       {{ formatCurrency(item.amount, item.currency) }}
