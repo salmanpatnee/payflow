@@ -1,0 +1,152 @@
+# API Contracts: Payment Processing
+
+## Payment Collection Endpoints
+
+### GET /api/payment-collections/{uuid}
+**Description**: Retrieve payment collection details by UUID
+
+**Request**:
+- Method: GET
+- Path: `/api/payment-collections/{uuid}`
+- Headers: 
+  - Accept: application/json
+- Parameters:
+  - uuid (path): Unique identifier for the payment collection
+
+**Response**:
+- Success (200):
+```json
+{
+  "id": 1,
+  "uuid": "abc123def456",
+  "title": "Invoice Collection",
+  "description": "Payment for services rendered",
+  "status": "active",
+  "expires_at": "2024-12-31T23:59:59Z",
+  "items": [
+    {
+      "id": 1,
+      "description": "Service Fee",
+      "amount": 150.00,
+      "currency": "usd",
+      "status": "pending"
+    }
+  ]
+}
+```
+
+- Not Found (404): Collection not found or expired
+- Unprocessable Entity (422): Invalid UUID format
+
+## Payment Processing Endpoints
+
+### POST /api/payment-collections/{uuid}/payment-intent
+**Description**: Create a Stripe PaymentIntent for a specific payment item
+
+**Request**:
+- Method: POST
+- Path: `/api/payment-collections/{uuid}/payment-intent`
+- Headers:
+  - Accept: application/json
+  - Content-Type: application/json
+- Parameters:
+  - uuid (path): Unique identifier for the payment collection
+- Body:
+```json
+{
+  "payment_item_id": 1,
+  "payment_method_types": ["card"]
+}
+```
+
+**Response**:
+- Success (200):
+```json
+{
+  "client_secret": "pi_abc123_secret_def456",
+  "payment_intent_id": "pi_abc123",
+  "status": "requires_payment_method"
+}
+```
+
+- Unauthorized (401): Invalid or expired collection
+- Unprocessable Entity (422): Invalid request data
+- Conflict (409): Payment already in progress
+
+### POST /api/payment-collections/{uuid}/confirm-payment
+**Description**: Confirm a payment after successful processing
+
+**Request**:
+- Method: POST
+- Path: `/api/payment-collections/{uuid}/confirm-payment`
+- Headers:
+  - Accept: application/json
+  - Content-Type: application/json
+- Parameters:
+  - uuid (path): Unique identifier for the payment collection
+- Body:
+```json
+{
+  "payment_intent_id": "pi_abc123",
+  "payment_item_id": 1
+}
+```
+
+**Response**:
+- Success (200):
+```json
+{
+  "status": "completed",
+  "message": "Payment confirmed successfully"
+}
+```
+
+- Unauthorized (401): Invalid collection or payment item
+- Unprocessable Entity (422): Invalid request data
+- Failed Dependency (424): Payment failed at Stripe
+
+## Webhook Endpoint
+
+### POST /webhooks/stripe
+**Description**: Handle Stripe webhook events for payment status updates
+
+**Request**:
+- Method: POST
+- Path: `/webhooks/stripe`
+- Headers:
+  - Content-Type: application/json
+  - Stripe-Signature: t=123456789,v1=signature1,v0=signature0
+- Body: Stripe webhook event payload
+
+**Response**:
+- Success (200): Webhook processed successfully
+- Bad Request (400): Invalid webhook signature
+
+## Public Payment Page Endpoints
+
+### GET /pay/{uuid}
+**Description**: Display the payment page for a collection
+
+**Request**:
+- Method: GET
+- Path: `/pay/{uuid}`
+- Headers:
+  - Accept: text/html
+
+**Response**:
+- Success (200): Payment page with collection details
+- Not Found (404): Collection not found or expired
+- Forbidden (403): Collection is completed or expired
+
+### GET /pay/{uuid}/thank-you
+**Description**: Display thank you page after all payments are completed
+
+**Request**:
+- Method: GET
+- Path: `/pay/{uuid}/thank-you`
+- Headers:
+  - Accept: text/html
+
+**Response**:
+- Success (200): Thank you page
+- Not Found (404): Collection not found or not completed

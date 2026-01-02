@@ -7,9 +7,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
 import AuthBase from '@/layouts/AuthLayout.vue';
-import { register } from '@/routes';
 import { store } from '@/routes/login';
-import { request } from '@/routes/password';
+import { email } from '@/routes/password';
 import { Form, Head } from '@inertiajs/vue3';
 
 defineProps<{
@@ -21,14 +20,14 @@ defineProps<{
 
 <template>
     <AuthBase
-        title="Log in to your account"
-        description="Enter your email and password below to log in"
+        title="Log in to PayFlow"
+        description="Enter your credentials to access your account"
     >
         <Head title="Log in" />
 
         <div
             v-if="status"
-            class="mb-4 text-center text-sm font-medium text-green-600"
+            class="mb-6 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800 dark:border-green-900 dark:bg-green-950/20 dark:text-green-200"
         >
             {{ status }}
         </div>
@@ -37,11 +36,11 @@ defineProps<{
             v-bind="store.form()"
             :reset-on-success="['password']"
             v-slot="{ errors, processing }"
-            class="flex flex-col gap-6"
+            class="flex flex-col gap-5"
         >
-            <div class="grid gap-6">
-                <div class="grid gap-2">
-                    <Label for="email">Email address</Label>
+            <div class="space-y-5">
+                <div class="space-y-2">
+                    <Label for="email" class="text-sm font-medium">Email address</Label>
                     <Input
                         id="email"
                         type="email"
@@ -50,18 +49,19 @@ defineProps<{
                         autofocus
                         :tabindex="1"
                         autocomplete="email"
-                        placeholder="email@example.com"
+                        placeholder="name@company.com"
+                        class="input-stripe h-10"
                     />
                     <InputError :message="errors.email" />
                 </div>
 
-                <div class="grid gap-2">
+                <div class="space-y-2">
                     <div class="flex items-center justify-between">
-                        <Label for="password">Password</Label>
+                        <Label for="password" class="text-sm font-medium">Password</Label>
                         <TextLink
                             v-if="canResetPassword"
-                            :href="request()"
-                            class="text-sm"
+                            :href="email()"
+                            class="text-xs font-medium text-primary hover:text-primary/80"
                             :tabindex="5"
                         >
                             Forgot password?
@@ -74,37 +74,31 @@ defineProps<{
                         required
                         :tabindex="2"
                         autocomplete="current-password"
-                        placeholder="Password"
+                        placeholder="Enter your password"
+                        class="input-stripe h-10"
                     />
                     <InputError :message="errors.password" />
                 </div>
 
-                <div class="flex items-center justify-between">
-                    <Label for="remember" class="flex items-center space-x-3">
-                        <Checkbox id="remember" name="remember" :tabindex="3" />
-                        <span>Remember me</span>
+                <div class="flex items-center space-x-2">
+                    <Checkbox id="remember" name="remember" :tabindex="3" />
+                    <Label for="remember" class="text-sm font-normal leading-none cursor-pointer">
+                        Remember me for 30 days
                     </Label>
                 </div>
 
                 <Button
                     type="submit"
-                    class="mt-4 w-full"
+                    class="h-10 w-full"
                     :tabindex="4"
                     :disabled="processing"
                     data-test="login-button"
                 >
-                    <Spinner v-if="processing" />
-                    Log in
+                    <Spinner v-if="processing" class="mr-2" />
+                    {{ processing ? 'Logging in...' : 'Log in' }}
                 </Button>
             </div>
 
-            <div
-                class="text-center text-sm text-muted-foreground"
-                v-if="canRegister"
-            >
-                Don't have an account?
-                <TextLink :href="register()" :tabindex="5">Sign up</TextLink>
-            </div>
         </Form>
     </AuthBase>
 </template>

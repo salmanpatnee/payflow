@@ -1,19 +1,15 @@
 <?php
 
-test('registration screen can be rendered', function () {
-    $response = $this->get(route('register'));
-
-    $response->assertStatus(200);
-});
-
-test('new users can register', function () {
-    $response = $this->post(route('register.store'), [
+test('registration is disabled', function () {
+    // Registration has been disabled in fortify.php
+    // Attempting to register should fail
+    $response = $this->post('/register', [
         'name' => 'Test User',
         'email' => 'test@example.com',
         'password' => 'password',
         'password_confirmation' => 'password',
     ]);
 
-    $this->assertAuthenticated();
-    $response->assertRedirect(route('dashboard', absolute: false));
+    // Should get 404 since the route doesn't exist
+    $response->assertNotFound();
 });
